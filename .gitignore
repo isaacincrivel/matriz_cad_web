@@ -1,0 +1,24 @@
+# Backup e arquivos temporários
+*._ls
+*.bak
+*~
+*.tmp
+*.log
+
+# AutoCAD / CAD
+*.dwg
+*.dwgbak
+*.sv$
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+*.swp
+*.swo
+
+# Pasta de saída / temporários (se existir)
+/Temp/
+/Output/

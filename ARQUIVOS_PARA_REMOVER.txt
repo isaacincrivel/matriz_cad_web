@@ -1,0 +1,77 @@
+================================================================================
+ARQUIVOS NÃO UTILIZADOS - REMOVER DA PASTA
+================================================================================
+Sistema simplificado: importar CSV (MATRIZ_NOVA) e gerar projeto CAD apenas.
+Projeto automático e geração KML foram removidos.
+================================================================================
+
+ARQUIVOS JÁ REMOVIDOS (projeto automático):
+--------------------------------------------
+- ENEL-PROJ AUTOM - 14.lsp
+- ENEL-ENTRADA DADOS-02.lsp
+- ENEL-REGRAS PROJ-08.lsp
+- ENEL-MOSAICO-02.lsp
+- ENEL-MODULOS-04.lsp
+- ENEL-CALCULOS-01.lsp
+- ENEL-GERAMOSAICO - 01.lsp
+
+ARQUIVOS JÁ REMOVIDOS (KML):
+-----------------------------
+- ENEL_KML_02.lsp
+- ENEL_KML_03.lsp
+- ESHOP-KMLIN-11.lsp
+- KMLOUT-EL-11.lsp
+- KMLIN-EL-08.lsp
+- FUNC-KML-01.LSP
+
+ARQUIVOS ADICIONAIS PARA REMOVER (não usados no fluxo CSV->CAD):
+-----------------------------------------------------------------
+1. ENEL-FUNCOES REDE - 01.LSP
+   - ZERA_LISTA, INCREMENTA_LISTA, ENEL_SUBST_ELM_LIST (usados pelo projeto automático removido)
+
+2. ENEL-UNIR CAD-O1.lsp
+   - Unir/juntar arquivos CAD (função auxiliar independente)
+
+3. Combine.lsp
+   - Combinar desenhos (usado por UNIR CAD)
+
+4. explodir texto.LSP / ENEL_EXPLODIR_TEXTO2.LSP
+   - Explodir texto (função auxiliar)
+
+5. RETIRAR LIXO-00.LSP
+   - Remover entidades indesejadas
+
+6. ENEL-TABELA ESFORC - 01.LSP
+   - Tabela de esforços (função auxiliar)
+
+7. ENEL-TESTAABACO.LSP
+   - Teste de ábaco
+
+8. xxxx- identificar pontos intersec polilinha.LSP
+   - Identificar pontos de interseção
+
+9. COPIAR_DIRETORIO.LSP
+   - Copiar diretório (função auxiliar)
+
+10. FUNC-BURST-01.LSP
+    - Burst (explodir mantendo atributos)
+
+================================================================================
+ARQUIVOS ESSENCIAIS (fluxo CSV -> CAD):
+---------------------------------------
+- ENEL-MATRIZ-01.lsp (C:MATRIZ)
+- ENEL-ASBUILT-01.lsp
+- ENEL-CRIAR CAD-13.lsp
+- ENEL-SISTEMA-01.lsp
+- ENEL-VALIDACAO-02.lsp
+- ENEL-DADOS PROJ-11.lsp
+- ENEL-MODULARES-01.lsp
+- ENEL-APOIO-02.lsp
+- ENEL-ABACO-02.lsp
+- ENEL-CARIMBO-01.LSP
+- ENEL-DADOS PROJ-08.lsp (alternativa)
+- FUNC-CSV_TXT-REV00.lsp
+- ADEQUAR-ESHOP-21.lsp
+- ESHOP-SISTEMA-00.lsp
+- FUNC-ZOOM-00, FUNC-*, FUNC-EX1-00 (dependências)
+================================================================================
