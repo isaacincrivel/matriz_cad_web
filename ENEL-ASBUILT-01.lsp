@@ -50,9 +50,9 @@
 		    ((= val "EXISTENTE") (setq linha_exist r))
 		    ((= val "RETIRAR") (setq linha_ret r))
 		    ((= val "DESLOCAR") (setq linha_desloc r)))
-	      (if (and (>= (length r) 65) (nth 63 r) (nth 64 r)
-		       (/= (cond ((null (nth 63 r)) "") (t (vl-princ-to-string (nth 63 r)))) "")
-		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) ""))
+	      (if (and (>= (length r) 66) (nth 64 r) (nth 65 r)
+		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) "")
+		       (/= (cond ((null (nth 65 r)) "") (t (vl-princ-to-string (nth 65 r)))) ""))
 		(setq linha_ref r)))))
 	(if (not linha_ref) (setq linha_ref (car rows)))
 	;; sequencia
@@ -71,6 +71,7 @@
 	(setq poste_final
 	  (cond ((and poste_impl (/= poste_impl "") poste_ret (/= poste_ret "")) "PDT_RET_IMPL")
 		((and poste_impl (/= poste_impl "")) "PDT_IMPL")
+		((and poste_ret (/= poste_ret "")) "PDT_RET")
 		((and poste_exist (/= poste_exist "")) "PDT_EXIST")
 		((and poste_desloc (/= poste_desloc "")) "PDT_DESLOC")
 		(t "")))
@@ -87,19 +88,19 @@
 	(setq lst_row_out (append lst_row_out
 	  (list (_ENEL_V linha_ref 20) (_ENEL_V linha_ref 37) (_ENEL_V linha_ref 38) (_ENEL_V linha_ref 39)
 		(_ENEL_V linha_ref 40) (_ENEL_V linha_ref 41) (_ENEL_V linha_ref 42) (_ENEL_V linha_ref 43)
-		(_ENEL_V linha_ref 60) (_ENEL_V linha_ref 63) (_ENEL_V linha_ref 64) (_ENEL_V linha_ref 65)
+		(_ENEL_V linha_ref 61) (_ENEL_V linha_ref 64) (_ENEL_V linha_ref 65) (_ENEL_V linha_ref 66)
 		(_ENEL_V linha_ref 1))))
-	;; faixa, cort_arvores_isol, municipio, fuso
+	;; faixa, cort_arvores_isol, cerca, municipio, fuso
 	(setq lst_row_out (append lst_row_out
-	  (list (_ENEL_V linha_ref 44) (_ENEL_V linha_ref 45) (_ENEL_V linha_ref 61) (_ENEL_V linha_ref 62))))
+	  (list (_ENEL_V linha_ref 44) (_ENEL_V linha_ref 45) (_ENEL_V linha_ref 46) (_ENEL_V linha_ref 62) (_ENEL_V linha_ref 63))))
 	;; CB_1A..CB_BT3 (indices 3-17) - usar linha IMPL ou ref
 	(setq r (if linha_impl linha_impl linha_ref))
 	(setq i 3)
 	(repeat 15
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
-	;; adiconal_1..7, qdt_adic_1..7 (indices 46-59)
+	;; adiconal_1..7, qdt_adic_1..7 (indices 47-60)
 	(setq r (if linha_ref linha_ref (car rows)))
-	(setq i 46)
+	(setq i 47)
 	(repeat 14
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
 	(setq lst_postes (append lst_postes (list lst_row_out))))))
@@ -164,11 +165,19 @@
   ;; Busca os dados do arquivo MATRIZ_NOVA.csv e converte para formato interno
   
   (setq lst1 (ENEL_CONVERT_LIST_POSTE "C:/MATRIZ/MATRIZ_NOVA.csv"))
+  
   (setq lst8 (ENEL_CONVERT_LIST_CABO "C:/MATRIZ/MATRIZ_NOVA.csv"))
   (setq GLB_LST_CABO lst8)
 
   ;; Insercao de postes (bloco POSTE_FINAL + textos EST_*) - em ENEL-INSERE-POSTES.lsp
   (ENEL_INSERE_POSTES_CAD lst1)
+
+  (ENEL_INSERE_CABOS_CAD lst8)
+
+
+  (ENEL_COLOCA_TEXTO_POSTE lst1)
+  (ENEL_COLOCA_TEXTO_CABO lst8)
+    (ENEL_INSERE_EVENTUAIS lst8)
 
   ;; lst1 = (lst2 lst4) onde lst2 = titulo, lst4 = dados
   (setq lst2 (car lst1))		; TITULO MATRIZ (formato interno)
@@ -200,9 +209,9 @@
   )
   
 
-  (GERAR_DADOS_PROJ+ lst2 lst4)
+  ;(GERAR_DADOS_PROJ+ lst2 lst4)
 
-  (CRIA_PROJETO_CAD lst2 lst4)
+  ;(CRIA_PROJETO_CAD lst2 lst4)
 
   ;; KML removido - aplicacao somente para gerar CAD
   ;; (GERAR_KML_PRINCIPAL)

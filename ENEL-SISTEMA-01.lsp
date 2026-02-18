@@ -136,7 +136,7 @@
   (setq lst_header (append lst_header
     (list "num_poste" "estai_ancora" "base_reforcada" "base_concreto" "aterr_neutro"
 	  "chave" "trafo" "equipamento" "rotacao_poste" "utm_x" "utm_y" "azimute" "deriva"
-	  "faixa" "cort_arvores_isol" "municipio" "fuso")))
+	  "faixa" "cort_arvores_isol" "cerca" "municipio" "fuso")))
   (setq cb '("CB_1A" "CB_1B" "CB_2A" "CB_2B" "CB_3A" "CB_3B" "CB_4A" "CB_4B"
 	     "CB_5A" "CB_5B" "CB_6A" "CB_6B" "CB_BT1" "CB_BT2" "CB_BT3"))
   (foreach n cb (setq lst_header (append lst_header (list n))))

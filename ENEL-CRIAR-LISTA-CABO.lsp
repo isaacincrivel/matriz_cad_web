@@ -15,7 +15,7 @@
 	((= (type (nth idx row)) 'STR) (nth idx row))
 	(t (vl-princ-to-string (nth idx row)))))
 
-;;;++ Cabeçalhos: sequencia, deriva, corrx_1, corry_1, corrx_2, corry_2, CB_1A_IMPL..CB_BT3_DESLOC
+;;;++ Cabeçalhos: sequencia, deriva, corrx_1, corry_1, corrx_2, corry_2, CB_1A_IMPL..CB_BT3_DESLOC, azimute_1, azimute_2
 (defun ENEL_LISTA_CABO (/ cb_names sufixos lst_header c s)
   (setq cb_names '("CB_1A" "CB_1B" "CB_2A" "CB_2B" "CB_3A" "CB_3B" "CB_4A" "CB_4B"
 		   "CB_5A" "CB_5B" "CB_6A" "CB_6B" "CB_BT1" "CB_BT2" "CB_BT3")
@@ -24,6 +24,7 @@
   (foreach c cb_names
     (foreach s sufixos
       (setq lst_header (append lst_header (list (strcat c s))))))
+	(setq lst_header (append lst_header (list "azimute_1" "azimute_2" "faixa" "cort_arvores_isol" "cerca")))
   lst_header
 )
 
@@ -32,7 +33,8 @@
 				lst_header lst_cabos lst_postes_raw
 				seq deriva utm_x utm_y cb_impl cb_exist cb_ret cb_desloc
 				map_coords seq_next i j seg
-				corrx_1 corry_1 corrx_2 corry_2 deriva_out val)
+				corrx_1 corry_1 corrx_2 corry_2 deriva_out val
+				azimute_1 azimute_2 azimute)
   
   (setq lst_cabos nil lst_all nil lst_postes_raw nil)
   ;; Ler CSV
@@ -63,15 +65,16 @@
 		    ((= val "EXISTENTE") (setq linha_exist r))
 		    ((= val "RETIRAR") (setq linha_ret r))
 		    ((= val "DESLOCAR") (setq linha_desloc r)))
-	      (if (and (>= (length r) 65) (nth 63 r) (nth 64 r)
-		       (/= (cond ((null (nth 63 r)) "") (t (vl-princ-to-string (nth 63 r)))) "")
-		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) ""))
+	      (if (and (>= (length r) 66) (nth 64 r) (nth 65 r)
+		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) "")
+		       (/= (cond ((null (nth 65 r)) "") (t (vl-princ-to-string (nth 65 r)))) ""))
 		(setq linha_ref r)))))
 	(if (not linha_ref) (setq linha_ref (car rows)))
 	(setq seq (_ENEL_CABO_V (car rows) 0))
 	(setq deriva (_ENEL_CABO_V (car rows) 1))
-	(setq utm_x (_ENEL_CABO_V linha_ref 63))
-	(setq utm_y (_ENEL_CABO_V linha_ref 64))
+	(setq utm_x (_ENEL_CABO_V linha_ref 64))
+	(setq utm_y (_ENEL_CABO_V linha_ref 65))
+	(setq azimute (_ENEL_CABO_V linha_ref 66))
 	;; CB por status (indices 3-17)
 	(setq cb_impl nil cb_exist nil cb_ret nil cb_desloc nil)
 	(setq i 3)
@@ -81,35 +84,38 @@
 	  (setq cb_ret (append cb_ret (list (_ENEL_CABO_V linha_ret i))))
 	  (setq cb_desloc (append cb_desloc (list (_ENEL_CABO_V linha_desloc i))))
 	  (setq i (1+ i)))
+	;; faixa, cort_arvores_isol, cerca: somente da linha IMPLANTAR (poste origem)
 	(setq lst_postes_raw (append lst_postes_raw
-	  (list (list seq deriva utm_x utm_y cb_impl cb_exist cb_ret cb_desloc))))
+	  (list (list seq deriva utm_x utm_y azimute cb_impl cb_exist cb_ret cb_desloc
+		(_ENEL_CABO_V linha_impl 44) (_ENEL_CABO_V linha_impl 45) (_ENEL_CABO_V linha_impl 46)))))
 	)
-      ;; Montar mapa sequencia -> (utm_x utm_y) e lista ordenada de sequencias
+      ;; Montar mapa sequencia -> (utm_x utm_y azimute)
       (setq map_coords nil)
       (foreach p lst_postes_raw
-	(setq seq (car p) utm_x (nth 2 p) utm_y (nth 3 p))
+	(setq seq (car p) utm_x (nth 2 p) utm_y (nth 3 p) azimute (nth 4 p))
 	(if (and seq (/= seq ""))
-	  (setq map_coords (append map_coords (list (list seq utm_x utm_y))))))
+	  (setq map_coords (append map_coords (list (list seq utm_x utm_y azimute))))))
       ;; Gerar segmentos
       (setq i 0)
       (foreach p lst_postes_raw
 	(setq seq (car p) deriva (cadr p))
 	(setq corrx_1 "") (setq corry_1 "") (setq corrx_2 "") (setq corry_2 "")
-	;; Coords ponto 1 (sequencia)
+	(setq azimute_1 "") (setq azimute_2 "")
+	;; Coords e azimute ponto 1 (sequencia)
 	(foreach m map_coords
 	  (if (equal (car m) seq)
-	    (setq corrx_1 (cadr m) corry_1 (caddr m))))
-	;; Coords ponto 2 (deriva ou proximo)
+	    (setq corrx_1 (cadr m) corry_1 (caddr m) azimute_1 (nth 3 m))))
+	;; Coords e azimute ponto 2 (deriva ou proximo)
 	(cond
 	  ((and deriva (/= deriva ""))
 	   (foreach m map_coords
 	     (if (equal (car m) deriva)
-	       (setq corrx_2 (cadr m) corry_2 (caddr m)))))
+	       (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m)))))
 	  ((< (1+ i) (length lst_postes_raw))
 	   (setq seq_next (car (nth (1+ i) lst_postes_raw)))
 	   (foreach m map_coords
 	     (if (equal (car m) seq_next)
-	       (setq corrx_2 (cadr m) corry_2 (caddr m))))))
+	       (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m))))))
 	;; Manter virgula como separador decimal (ja vem do CSV ou como string)
 	(if (and corrx_1 (= (vl-string-search "," corrx_1) nil) (vl-string-search "." corrx_1))
 	  (setq corrx_1 (vl-string-subst "," "." corrx_1)))
@@ -123,9 +129,9 @@
 	(setq deriva_out deriva)
 	(if (and (or (not deriva) (= deriva "")) (< (1+ i) (length lst_postes_raw)))
 	  (setq deriva_out (car (nth (1+ i) lst_postes_raw))))
-	;; Montar linha saida: sequencia, deriva, corrx_1, corry_1, corrx_2, corry_2, CB_*_IMPL...
+	;; Montar linha saida: sequencia, deriva, corrx_1, corry_1, corrx_2, corry_2, CB_*_IMPL..., azimute_1, azimute_2
 	(setq seg (list seq deriva_out corrx_1 corry_1 corrx_2 corry_2))
-	(setq cb_impl (nth 4 p) cb_exist (nth 5 p) cb_ret (nth 6 p) cb_desloc (nth 7 p))
+	(setq cb_impl (nth 5 p) cb_exist (nth 6 p) cb_ret (nth 7 p) cb_desloc (nth 8 p))
 	(setq j 0)
 	(repeat 15
 	  (setq seg (append seg (list (nth j cb_impl))))
@@ -133,6 +139,7 @@
 	  (setq seg (append seg (list (nth j cb_ret))))
 	  (setq seg (append seg (list (nth j cb_desloc))))
 	  (setq j (1+ j)))
+	(setq seg (append seg (list azimute_1 azimute_2 (nth 9 p) (nth 10 p) (nth 11 p))))
 	(setq lst_cabos (append lst_cabos (list seg)))
 	(setq i (1+ i))))
     )
