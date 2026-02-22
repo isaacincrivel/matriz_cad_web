@@ -108,14 +108,14 @@
     "EST_4A"	   "EST_4B"	  "EST_5A"	 "EST_5B"
     "EST_6A"	   "EST_6B"	  "EST_BT1"	 "EST_BT2"
     "EST_BT3"	   "estai_ancora" "base_reforcada"
-    "base_concreto"		  "aterr_neutro" "chave"
-    "trafo"	   "equipamento"  "faixa"	 "cort_arvores_isol"
+    "base_concreto"		  "aterr_neutro" "chave_fusivel" "chave_faca"
+    "trafo"	   "para_raios" "religador" "banco_regulador" "banco_capacitor" "banco_reator"  "faixa"	 "cort_arvores_isol"
     "adiconal_1"   "qdt_adic_1"	  "adiconal_2"	 "qdt_adic_2"
     "adiconal_3"   "qdt_adic_3"	  "adiconal_4"	 "qdt_adic_4"
     "adiconal_5"   "qdt_adic_5"	  "adiconal_6"	 "qdt_adic_6"
     "adiconal_7"   "qdt_adic_7"	  "rotacao_poste"
     "municipio"	   "fuso"	  "utm_x"	 "utm_y"
-    "azimute"
+    "azimute"	   "enc_tang"
    )
 )
 
@@ -134,14 +134,27 @@
     (foreach s sufixos
       (setq lst_header (append lst_header (list (strcat e s))))))
   (setq lst_header (append lst_header
-    (list "num_poste" "estai_ancora" "base_reforcada" "base_concreto" "aterr_neutro"
-	  "chave" "trafo" "equipamento" "rotacao_poste" "utm_x" "utm_y" "azimute" "deriva"
+    (list "num_poste"
+	  "estai_ancora_IMPL" "estai_ancora_EXIST" "estai_ancora_RET" "estai_ancora_DESLOC"
+	  "base_reforcada_IMPL" "base_reforcada_EXIST" "base_reforcada_RET" "base_reforcada_DESLOC"
+	  "base_concreto_IMPL" "base_concreto_EXIST" "base_concreto_RET" "base_concreto_DESLOC"
+	  "aterr_neutro_IMPL" "aterr_neutro_EXIST" "aterr_neutro_RET" "aterr_neutro_DESLOC"
+	  "chave_fusivel_IMPL" "chave_fusivel_EXIST" "chave_fusivel_RET" "chave_fusivel_DESLOC"
+	  "chave_faca_IMPL" "chave_faca_EXIST" "chave_faca_RET" "chave_faca_DESLOC"
+	  "trafo_IMPL" "trafo_EXIST" "trafo_RET" "trafo_DESLOC"
+	  "para_raios_IMPL" "para_raios_EXIST" "para_raios_RET" "para_raios_DESLOC"
+	  "religador_IMPL" "religador_EXIST" "religador_RET" "religador_DESLOC"
+	  "banco_regulador_IMPL" "banco_regulador_EXIST" "banco_regulador_RET" "banco_regulador_DESLOC"
+	  "banco_capacitor_IMPL" "banco_capacitor_EXIST" "banco_capacitor_RET" "banco_capacitor_DESLOC"
+	  "banco_reator_IMPL" "banco_reator_EXIST" "banco_reator_RET" "banco_reator_DESLOC"
+	  "rotacao_poste" "utm_x" "utm_y" "azimute" "deriva"
 	  "faixa" "cort_arvores_isol" "cerca" "municipio" "fuso")))
   (setq cb '("CB_1A" "CB_1B" "CB_2A" "CB_2B" "CB_3A" "CB_3B" "CB_4A" "CB_4B"
 	     "CB_5A" "CB_5B" "CB_6A" "CB_6B" "CB_BT1" "CB_BT2" "CB_BT3"))
   (foreach n cb (setq lst_header (append lst_header (list n))))
   (setq i 1)
   (repeat 7 (setq lst_header (append lst_header (list (strcat "adiconal_" (itoa i)) (strcat "qdt_adic_" (itoa i)))) i (1+ i)))
+  (setq lst_header (append lst_header (list "enc_tang")))
   lst_header
 )
 

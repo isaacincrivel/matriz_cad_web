@@ -125,8 +125,16 @@
 
 ;;CRIAR LAYERS
 (ESHOP-CRR_LAY "_POSTES" 6 "default"  "continuous")
-
- 
+  (ESHOP-CRR_LAY "_CABOS_MT" 5 "default"  "ACAD_ISO02W100")
+  (ESHOP-CRR_LAY "_CABOS_BT" 1 "default"  "continuous")
+  (ESHOP-CRR_LAY "_TEXTO_PONTO" 7 "default"  "continuous")
+  (ESHOP-CRR_LAY "_TEXTO_CABO" 7 "default"  "continuous")
+  (ESHOP-CRR_LAY "_EVENTUAIS" 7 "default"  "continuous")
+  (ESHOP-CRR_LAY "_CHAVES" 6 "default"  "continuous")
+  (ESHOP-CRR_LAY "_BASES_E_ESTAIS" 6 "default"  "continuous")
+  (ESHOP-CRR_LAY "_EQUIPAMENTOS" 6 "default"  "continuous")
+  (ESHOP-CRR_LAY "_ATERRAMENTOS_CHAVES" 6 "default"  "continuous")
+  (ESHOP-CRR_LAY "_TEXTO_COORDENADAS" 31 "default"  "continuous") 
   
 
   

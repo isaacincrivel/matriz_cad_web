@@ -16,7 +16,9 @@
   (setq GLB_LST_MODULOS
     (list
       ;; Módulo 10103: cabo 1#1/0CAA, monofásico, 13,8kV, rural
-      (list "10103" "1#1/0CAA" "monof" "15" "rural")
+      (list "10103" "1#4/0CAA" "monof" "13,8kV" "rural")
+      (list "10104" "1#1/0CAA" "monof" "220V" "rural")
+      (list "10105" "1#1/0CAA" "monof" "13,8kV" "rural")
       ;; Incluir novos módulos aqui. Exemplo:
       ;; (list "10104" "2#1/0CAA" "trif" "36" "urbano")
     )

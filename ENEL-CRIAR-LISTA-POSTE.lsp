@@ -72,9 +72,9 @@
 		    ((= val "EXISTENTE") (setq linha_exist r))
 		    ((= val "RETIRAR") (setq linha_ret r))
 		    ((= val "DESLOCAR") (setq linha_desloc r)))
-	      (if (and (>= (length r) 66) (nth 64 r) (nth 65 r)
-		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) "")
-		       (/= (cond ((null (nth 65 r)) "") (t (vl-princ-to-string (nth 65 r)))) ""))
+	      (if (and (>= (length r) 72) (nth 69 r) (nth 70 r)
+		       (/= (cond ((null (nth 69 r)) "") (t (vl-princ-to-string (nth 69 r)))) "")
+		       (/= (cond ((null (nth 70 r)) "") (t (vl-princ-to-string (nth 70 r)))) ""))
 		(setq linha_ref r)))))
 	(if (not linha_ref) (setq linha_ref (car rows)))
 	;; sequencia
@@ -107,25 +107,52 @@
 	    (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
 			  ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
 	    (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r idx) ""))))))
-	;; num_poste, estai_ancora, base_reforcada, base_concreto, aterr_neutro, chave, trafo, equipamento
+	;; num_poste
+	(setq lst_row_out (append lst_row_out (list (_ENEL_V linha_ref 20))))
+	;; estai_ancora - cada IMPL/EXIST/RET/DESLOC (CSV 37)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 37) "")))))
+	;; base_reforcada - cada IMPL/EXIST/RET/DESLOC (CSV 38)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 38) "")))))
+	;; base_concreto - cada IMPL/EXIST/RET/DESLOC (CSV 39)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 39) "")))))
+	;; aterr_neutro - cada IMPL/EXIST/RET/DESLOC (CSV 40)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 40) "")))))
+	;; chave_fusivel, chave_faca, trafo, para_raios, religador, banco_regulador, banco_capacitor, banco_reator - cada IMPL/EXIST/RET/DESLOC (CSV 41-48)
+	(foreach idx '(41 42 43 44 45 46 47 48)
+	  (foreach suf sufixos
+	    (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+			  ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	    (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r idx) ""))))))
 	;; rotacao_poste, utm_x, utm_y, azimute, deriva
 	(setq lst_row_out (append lst_row_out
-	  (list (_ENEL_V linha_ref 20) (_ENEL_V linha_ref 37) (_ENEL_V linha_ref 38) (_ENEL_V linha_ref 39)
-		(_ENEL_V linha_ref 40) (_ENEL_V linha_ref 41) (_ENEL_V linha_ref 42) (_ENEL_V linha_ref 43)
-		(_ENEL_V linha_ref 61) (_ENEL_V linha_ref 64) (_ENEL_V linha_ref 65) (_ENEL_V linha_ref 66)
+	  (list (_ENEL_V linha_ref 66) (_ENEL_V linha_ref 69) (_ENEL_V linha_ref 70) (_ENEL_V linha_ref 71)
 		(_ENEL_V linha_ref 1))))
 	;; faixa, cort_arvores_isol, cerca, municipio, fuso
 	(setq lst_row_out (append lst_row_out
-	  (list (_ENEL_V linha_ref 44) (_ENEL_V linha_ref 45) (_ENEL_V linha_ref 46) (_ENEL_V linha_ref 62) (_ENEL_V linha_ref 63))))
+	  (list (_ENEL_V linha_ref 49) (_ENEL_V linha_ref 50) (_ENEL_V linha_ref 51) (_ENEL_V linha_ref 67) (_ENEL_V linha_ref 68))))
 	;; CB_1A..CB_BT3 (indices 3-17) - usar linha IMPL ou ref
 	(setq r (if linha_impl linha_impl linha_ref))
 	(setq i 3)
 	(repeat 15
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
-	;; adiconal_1..7, qdt_adic_1..7 (indices 47-60)
+	;; adiconal_1..7, qdt_adic_1..7 (indices 52-65)
 	(setq r (if linha_ref linha_ref (car rows)))
-	(setq i 47)
+	(setq i 52)
 	(repeat 14
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
+	;; enc_tang (ultima coluna do CSV, indice 72)
+	(setq lst_row_out (append lst_row_out (list (_ENEL_V linha_ref 72))))
 	(setq lst_postes (append lst_postes (list lst_row_out))))))
   (list lst_header lst_postes))

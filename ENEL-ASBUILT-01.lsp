@@ -50,9 +50,9 @@
 		    ((= val "EXISTENTE") (setq linha_exist r))
 		    ((= val "RETIRAR") (setq linha_ret r))
 		    ((= val "DESLOCAR") (setq linha_desloc r)))
-	      (if (and (>= (length r) 66) (nth 64 r) (nth 65 r)
-		       (/= (cond ((null (nth 64 r)) "") (t (vl-princ-to-string (nth 64 r)))) "")
-		       (/= (cond ((null (nth 65 r)) "") (t (vl-princ-to-string (nth 65 r)))) ""))
+	      (if (and (>= (length r) 72) (nth 69 r) (nth 70 r)
+		       (/= (cond ((null (nth 69 r)) "") (t (vl-princ-to-string (nth 69 r)))) "")
+		       (/= (cond ((null (nth 70 r)) "") (t (vl-princ-to-string (nth 70 r)))) ""))
 		(setq linha_ref r)))))
 	(if (not linha_ref) (setq linha_ref (car rows)))
 	;; sequencia
@@ -83,52 +83,58 @@
 	    (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
 			  ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
 	    (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r idx) ""))))))
-	;; num_poste, estai_ancora, base_reforcada, base_concreto, aterr_neutro, chave, trafo, equipamento
+	;; num_poste
+	(setq lst_row_out (append lst_row_out (list (_ENEL_V linha_ref 20))))
+	;; estai_ancora - cada IMPL/EXIST/RET/DESLOC (CSV 37)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 37) "")))))
+	;; base_reforcada - cada IMPL/EXIST/RET/DESLOC (CSV 38)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 38) "")))))
+	;; base_concreto - cada IMPL/EXIST/RET/DESLOC (CSV 39)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 39) "")))))
+	;; aterr_neutro - cada IMPL/EXIST/RET/DESLOC (CSV 40)
+	(foreach suf sufixos
+	  (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+		    ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	  (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r 40) "")))))
+	;; chave_fusivel, chave_faca, trafo, para_raios, religador, banco_regulador, banco_capacitor, banco_reator - cada IMPL/EXIST/RET/DESLOC (CSV 41-48)
+	(foreach idx '(41 42 43 44 45 46 47 48)
+	  (foreach suf sufixos
+	    (setq r (cond ((= suf "_IMPL") linha_impl) ((= suf "_EXIST") linha_exist)
+			  ((= suf "_RET") linha_ret) ((= suf "_DESLOC") linha_desloc)))
+	    (setq lst_row_out (append lst_row_out (list (if r (_ENEL_V r idx) ""))))))
 	;; rotacao_poste, utm_x, utm_y, azimute, deriva
 	(setq lst_row_out (append lst_row_out
-	  (list (_ENEL_V linha_ref 20) (_ENEL_V linha_ref 37) (_ENEL_V linha_ref 38) (_ENEL_V linha_ref 39)
-		(_ENEL_V linha_ref 40) (_ENEL_V linha_ref 41) (_ENEL_V linha_ref 42) (_ENEL_V linha_ref 43)
-		(_ENEL_V linha_ref 61) (_ENEL_V linha_ref 64) (_ENEL_V linha_ref 65) (_ENEL_V linha_ref 66)
+	  (list (_ENEL_V linha_ref 66) (_ENEL_V linha_ref 69) (_ENEL_V linha_ref 70) (_ENEL_V linha_ref 71)
 		(_ENEL_V linha_ref 1))))
 	;; faixa, cort_arvores_isol, cerca, municipio, fuso
 	(setq lst_row_out (append lst_row_out
-	  (list (_ENEL_V linha_ref 44) (_ENEL_V linha_ref 45) (_ENEL_V linha_ref 46) (_ENEL_V linha_ref 62) (_ENEL_V linha_ref 63))))
+	  (list (_ENEL_V linha_ref 49) (_ENEL_V linha_ref 50) (_ENEL_V linha_ref 51) (_ENEL_V linha_ref 67) (_ENEL_V linha_ref 68))))
 	;; CB_1A..CB_BT3 (indices 3-17) - usar linha IMPL ou ref
 	(setq r (if linha_impl linha_impl linha_ref))
 	(setq i 3)
 	(repeat 15
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
-	;; adiconal_1..7, qdt_adic_1..7 (indices 47-60)
+	;; adiconal_1..7, qdt_adic_1..7 (indices 52-65)
 	(setq r (if linha_ref linha_ref (car rows)))
-	(setq i 47)
+	(setq i 52)
 	(repeat 14
 	  (setq lst_row_out (append lst_row_out (list (_ENEL_V r i))) i (1+ i)))
+	;; enc_tang (ultima coluna do CSV, indice 72)
+	(setq lst_row_out (append lst_row_out (list (_ENEL_V linha_ref 72))))
 	(setq lst_postes (append lst_postes (list lst_row_out))))))
   (list lst_header lst_postes))
 
-;;; <><><><><><><><><><><><><><><><><><><><><>   < ENEL_INSERE_POSTES_CAD >    			<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;;;<> ENEL_INSERE_POSTES_CAD em ENEL-INSERE-POSTES.lsp
 
-;;; <><><><><><><><><><><><><><><><><><><><><>   < ENEL_CONVERTE_MATRIZ_NOVA >    			<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-;;;<> ENEL_CONVERTE_MATRIZ_NOVA
-;;;++ DESCRICAO: Le MATRIZ_NOVA.csv e converte para formato interno (lst2 lst4)
-;;;++ ENTRADA: str1 - caminho do arquivo (ex: "C:/MATRIZ/MATRIZ_NOVA.csv")
-;;;++ SAIDA: (list lst2 lst4) - lst2=titulo, lst4=dados no formato interno
-
-(defun ENEL_CONVERTE_MATRIZ_NOVA (str1 / arq1 lst2 lst4 lst_row str_line lst_all
-				   coord_x coord_y seq status tipo_poste estru
-				   nm_poste estai base_ref base_conc aterr chave
-				  
-				   faixa cort_arv azimute tensa deriva lst_cabos
-				   rows linha_ref st suf cod cabo_str idx r)
-  (if (not (boundp 'GLB_LST_MODULOS))
-    (or (load (findfile "modulos.lsp") nil)
-	(load "C:/MATRIZ_DESENVOLVIMENTO/LISP/modulos.lsp" nil)))
-
- 
-  
-)
 ;;; <><><><><><><><><><><><><><><><><><><><><>   < ENEL_ASBUILT >    				<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;;; <><><><><><><><><><><><><><><><><><><><><>   ENEL_MODULARES     				<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -170,14 +176,22 @@
   (setq GLB_LST_CABO lst8)
 
   ;; Insercao de postes (bloco POSTE_FINAL + textos EST_*) - em ENEL-INSERE-POSTES.lsp
+  
   (ENEL_INSERE_POSTES_CAD lst1)
-
   (ENEL_INSERE_CABOS_CAD lst8)
 
-
+   
+  
   (ENEL_COLOCA_TEXTO_POSTE lst1)
   (ENEL_COLOCA_TEXTO_CABO lst8)
-    (ENEL_INSERE_EVENTUAIS lst8)
+   (ENEL_INSERE_EVENTUAIS lst8)
+
+  (ENEL_INSERE_ELEMENTOS_CAD lst1)
+
+  (ENEL_INSERE_COORDENADAS_CAD lst8)
+  
+  
+  
 
   ;; lst1 = (lst2 lst4) onde lst2 = titulo, lst4 = dados
   (setq lst2 (car lst1))		; TITULO MATRIZ (formato interno)
@@ -187,8 +201,8 @@
   ;; para uso no carimbo ambiental (ENEL_CARIMBO / NOTA_AMBIENTAL)
   (setq GLB_FAIXA 0 GLB_ARVORE 0 GLB_SENSIVEL "")
   (foreach row lst4
-    (setq GLB_FAIXA (+ GLB_FAIXA (atoi (if (nth 79 row) (nth 79 row) "0"))))
-    (setq GLB_ARVORE (+ GLB_ARVORE (atoi (if (nth 80 row) (nth 80 row) "0")))))
+    (setq GLB_FAIXA (+ GLB_FAIXA (atoi (if (nth 120 row) (nth 120 row) "0"))))
+    (setq GLB_ARVORE (+ GLB_ARVORE (atoi (if (nth 121 row) (nth 121 row) "0")))))
 
   (setq str1 (substr (rtos (getvar "cdate") 2 5) 1 14))
   (setq	GLB_DATA (strcat (substr str1 7 2)

@@ -79,11 +79,11 @@
       (setq angulos (list (* 45 (/ pi 180.0)) (* 135 (/ pi 180.0)) (* 225 (/ pi 180.0)) (* 315 (/ pi 180.0)))
 	    ht 1.0 espaco 1.9)
       (foreach row lst4
-	(if (and row (>= (length row) 78))
+	(if (and row (>= (length row) 119))
 	  (progn
 	    (setq seq (_ENEL_TXT_V row 0))
-	    (setq utmx (atof (vl-string-subst "." "," (_ENEL_TXT_V row 75)))
-		  utmy (atof (vl-string-subst "." "," (_ENEL_TXT_V row 76)))
+	    (setq utmx (atof (vl-string-subst "." "," (_ENEL_TXT_V row 116)))
+		  utmy (atof (vl-string-subst "." "," (_ENEL_TXT_V row 117)))
 		  PONTO_POSTE (list utmx utmy))
 	    (if (and seq (/= seq "") (numberp utmx) (numberp utmy))
 	      (progn
