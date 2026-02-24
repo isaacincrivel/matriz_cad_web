@@ -4,8 +4,9 @@
 ;;;++ DESCRICAO: Converte MATRIZ_NOVA.csv em lista de segmentos de cabo (1 linha por segmento)
 ;;;++ ENTRADA: str1 - caminho do CSV (ex: "C:/MATRIZ/MATRIZ_NOVA.csv")
 ;;;++ SAIDA: (list lst_header lst_cabos) - lst_header=titulos, lst_cabos=lista de segmentos
-;;;++ Regra: deriva vazia -> segundo ponto = proximo poste (N+1); deriva preenchida -> segundo ponto = poste com sequencia D
-;;;++ Coordenadas: corrx_1,corry_1=ponto sequencia; corrx_2,corry_2=ponto deriva (ou proximo)
+;;;++ Regra: deriva vazia=rede continua (anterior=poste i-1, posterior=poste i+1); deriva preenchida=poste anterior explicito
+;;++;+ Quando deriva preenchida com numero diferente do anterior na linha: nova rede (sem posterior)
+;;;++ Coordenadas: corrx_1,corry_1=sequencia; corrx_2,corry_2=anterior; corrx_3,corry_3=posterior
 ;;;++ Formato numerico: virgula como separador decimal (ex: 194859,6)
 ;;;++ Usa ENEL_CNV_STR_LST de ENEL-CRIAR-LISTA-POSTE.lsp
 
@@ -37,7 +38,7 @@
 				map_coords seq_next i j seg
 				corrx_1 corry_1 corrx_2 corry_2 deriva_out val
 				azimute_1 azimute_2 azimute
-				seq_posterior corrx_3 corry_3 p_next deriva_next
+				seq_posterior corrx_3 corry_3 p_prev seq_anterior
 				lat long)
   
   (setq lst_cabos nil lst_all nil lst_postes_raw nil)
@@ -106,30 +107,53 @@
 	      lat (nth 12 p) long (nth 13 p))
 	(if (and seq (/= seq ""))
 	  (setq map_coords (append map_coords (list (list seq utm_x utm_y azimute lat long))))))
-      ;; Gerar segmentos
+      ;; Gerar segmentos: 1 linha por poste. corrx_1=sequencia, corrx_2=anterior, corrx_3=posterior
       (setq i 0)
       (foreach p lst_postes_raw
 	(setq seq (car p) deriva (cadr p))
 	(setq corrx_1 "") (setq corry_1 "") (setq corrx_2 "") (setq corry_2 "")
+	(setq corrx_3 "") (setq corry_3 "")
 	(setq azimute_1 "") (setq azimute_2 "")
 	;; Coords, azimute, lat, long ponto 1 (sequencia)
 	(setq lat "" long "")
 	(foreach m map_coords
-	  (if (equal (car m) seq)
+	  (if (equal (vl-princ-to-string (car m)) (vl-princ-to-string seq))
 	    (setq corrx_1 (cadr m) corry_1 (caddr m) azimute_1 (nth 3 m)
 		  lat (nth 4 m) long (nth 5 m))))
-	;; Coords e azimute ponto 2 (deriva ou proximo)
-	(cond
-	  ((and deriva (/= deriva ""))
-	   (foreach m map_coords
-	     (if (equal (car m) deriva)
-	       (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m)))))
-	  ((< (1+ i) (length lst_postes_raw))
-	   (setq seq_next (car (nth (1+ i) lst_postes_raw)))
-	   (foreach m map_coords
-	     (if (equal (car m) seq_next)
-	       (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m))))))
-	;; Manter virgula como separador decimal (ja vem do CSV ou como string)
+	;; corrx_2, corry_2 = ANTERIOR (ponto de onde a rede vem)
+	;; Primeiro poste: sem anterior. Deriva vazia: anterior=poste i-1. Deriva preenchida: anterior=poste com seq=deriva
+	(if (> i 0)
+	  (progn
+	    (if (and deriva (/= (vl-princ-to-string deriva) ""))
+	      (foreach m map_coords
+		(if (equal (vl-princ-to-string (car m)) (vl-princ-to-string deriva))
+		  (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m))
+		)
+	      )
+	    )
+	    (if (or (null corrx_2) (= (vl-princ-to-string corrx_2) ""))
+	      (progn
+		(setq p_prev (nth (1- i) lst_postes_raw)
+		      seq_anterior (car p_prev))
+		(foreach m map_coords
+		  (if (equal (vl-princ-to-string (car m)) (vl-princ-to-string seq_anterior))
+		    (setq corrx_2 (cadr m) corry_2 (caddr m) azimute_2 (nth 3 m))
+		  )
+		)
+	      )
+	    )
+	  )
+	)
+	;; corrx_3, corry_3 = POSTERIOR (proximo ponto). Vazio no ultimo poste ou quando deriva preenchida (nova rede)
+	(setq seq_posterior "")
+	(if (and (or (not deriva) (= (vl-princ-to-string deriva) ""))
+		 (< (1+ i) (length lst_postes_raw)))
+	  (progn
+	    (setq seq_posterior (car (nth (1+ i) lst_postes_raw)))
+	    (foreach m map_coords
+	      (if (equal (vl-princ-to-string (car m)) (vl-princ-to-string seq_posterior))
+		(setq corrx_3 (cadr m) corry_3 (caddr m) azimute_2 (nth 3 m))))))
+	;; Manter virgula como separador decimal
 	(if (and corrx_1 (= (vl-string-search "," corrx_1) nil) (vl-string-search "." corrx_1))
 	  (setq corrx_1 (vl-string-subst "," "." corrx_1)))
 	(if (and corry_1 (= (vl-string-search "," corry_1) nil) (vl-string-search "." corry_1))
@@ -138,27 +162,12 @@
 	  (setq corrx_2 (vl-string-subst "," "." corrx_2)))
 	(if (and corry_2 (= (vl-string-search "," corry_2) nil) (vl-string-search "." corry_2))
 	  (setq corry_2 (vl-string-subst "," "." corry_2)))
-	;; deriva: preenchida usa valor; vazia usa sequencia do proximo poste (segundo ponto = N+1)
-	(setq deriva_out deriva)
-	(if (and (or (not deriva) (= deriva "")) (< (1+ i) (length lst_postes_raw)))
-	  (setq deriva_out (car (nth (1+ i) lst_postes_raw))))
-	;; seq_posterior, corrx_3, corry_3: ponto posterior so se proximo tem deriva="" ou deriva=seq
-	(setq seq_posterior "" corrx_3 "" corry_3 "")
-	(if (< (1+ i) (length lst_postes_raw))
-	  (progn
-	    (setq p_next (nth (1+ i) lst_postes_raw)
-		  deriva_next (cadr p_next))
-	    (if (or (not deriva_next) (= (vl-princ-to-string deriva_next) "")
-		    (equal (vl-princ-to-string deriva_next) (vl-princ-to-string seq)))
-	      (progn
-		(setq seq_posterior (car p_next))
-		(foreach m map_coords
-		  (if (equal (car m) seq_posterior)
-		    (setq corrx_3 (cadr m) corry_3 (caddr m))))))))
 	(if (and corrx_3 (= (vl-string-search "," corrx_3) nil) (vl-string-search "." corrx_3))
 	  (setq corrx_3 (vl-string-subst "," "." corrx_3)))
 	(if (and corry_3 (= (vl-string-search "," corry_3) nil) (vl-string-search "." corry_3))
 	  (setq corry_3 (vl-string-subst "," "." corry_3)))
+	;; deriva_out mantido para compatibilidade
+	(setq deriva_out deriva)
 	;; Montar linha saida: sequencia, deriva, corrx_1, corry_1, corrx_2, corry_2, CB_*_IMPL..., azimute_1, azimute_2, faixa..., seq_posterior, corrx_3, corry_3
 	(setq seg (list seq deriva_out corrx_1 corry_1 corrx_2 corry_2))
 	(setq cb_impl (nth 5 p) cb_exist (nth 6 p) cb_ret (nth 7 p) cb_desloc (nth 8 p))

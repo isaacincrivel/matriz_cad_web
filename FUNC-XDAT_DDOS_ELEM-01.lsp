@@ -6,13 +6,13 @@
 
 
 ;;;<> ESHOP-DDS_ELM
-;;;++ DESCRIÇÃO: Retorna dados elementos em forma lista
+;;;++ DESCRIï¿½ï¿½O: Retorna dados elementos em forma lista
 ;;;++ ENTRADA: elm1:Elemento a extrair dados;
 ;;;++ SAIDA: lista com dados (xdata)
 (defun ESHOP-DDS_ELM
        (elm1 xdt1 / x int1 lst1 lst2 lst3 var1 var2 var3 var4)
 
-  ;; <> ESHOP-DDS_XDTA_LST - função interna comando
+  ;; <> ESHOP-DDS_XDTA_LST - funï¿½ï¿½o interna comando
   (defun ESHOP-DDS_XDTA_LST (lst1 / x int1 int2 lst2 lst3 var1 var2)
     (setq int1 0
 	  int2 0
@@ -76,7 +76,7 @@
     (setq var3 (ESHOP-DDS_XDTA_LST lst1)
 	  lst1 (car (cdr var3))
     )
-    (setq lst3 (append lst3 (list (cons var2 (list (car var3)))))) ;_ função x cria os cons
+    (setq lst3 (append lst3 (list (cons var2 (list (car var3)))))) ;_ funï¿½ï¿½o x cria os cons
     (setq var3 nil)
     ;(if	(<= (length lst1) 1)
       (if	(< (length lst1) 1)
@@ -90,7 +90,7 @@
 
 
 ;;;<> ESHOP-PRX_ID   >>>>>LOCALIZAR_SEQ
-;;;++ DESCRIÇÃO: PROUCURA A CATEGORIA SOLICITADA E RETORNA O NUMERO DISPONIVEL PARA UTILIZAR NOVO ELEMENTO
+;;;++ DESCRIï¿½ï¿½O: PROUCURA A CATEGORIA SOLICITADA E RETORNA O NUMERO DISPONIVEL PARA UTILIZAR NOVO ELEMENTO
 ;;;++ ENTRADA:  str1:XDATA
 ;;;++ SAIDA: SEQUENCIA DISPONIVEL
 (defun ESHOP-PRX_ID (str1 / int1 int2 int3 int4 sel1 lst1)
@@ -140,7 +140,7 @@
 )
 
 ;;;;<> ESHOP-BSC_SEQ_XDT >>>> BUSC_COLUN_ELM
-;;;;++ DESCRIÇÃO: BUSCA SEQUENCIA DE UM DETERMINADO XDATA
+;;;;++ DESCRIï¿½ï¿½O: BUSCA SEQUENCIA DE UM DETERMINADO XDATA
 ;;;;++ ENTRADA: elm1:ELEMENTO <> str1:XDATA A SER BUSCADO
 ;;;;++ SAIDA: DADO DA COLUNA DO XDATA REQUERIDO
 ;;;(DEFUN ESHOP-BSC_SEQ_XDT (elm1 str1 / var1)
@@ -163,7 +163,7 @@
 )
 
 ;;;<> ESHOP-BSC_TAB_CLN
-;;;++ DESCRIÇÃO: Busca tabela solicitada no endereço padrão, e retorna sua coluna correspondente
+;;;++ DESCRIï¿½ï¿½O: Busca tabela solicitada no endereï¿½o padrï¿½o, e retorna sua coluna correspondente
 ;;;++ ENTRADA: str1:Nome da tabela, sem o CSV; int1:Indice a ser retornado
 ;;;++ SAIDA: Lista com os dados na tabela
 (defun ESHOP-BSC_TAB_CLN (str1 int1 /)
@@ -176,7 +176,7 @@
 )
 
 ;;;<> ESHOP-CLC_XDT_ELM
-;;;++ DESCRIÇÃO: ESCREVE, OU ADICIONA O XDATA NO ELEMENTO
+;;;++ DESCRIï¿½ï¿½O: ESCREVE, OU ADICIONA O XDATA NO ELEMENTO
 ;;;++ ENTRADA: elm1:ELEMENTO <> xdt1:XDATA A SER ESCRITO ide1:sequencia do xdata lst1:lista a ser escrita
 ;;;++ SAIDA: DADOS ESCRITOS NO ELEMENTO
 (defun ESHOP-CLC_XDT_ELM (elm1 xdt1 ide1 lst1 /)
@@ -193,7 +193,7 @@
 )
 
 ;;;<> ESHOP-CLC_XDT_SEQ
-;;;++ DESCRIÇÃO: ESCREVE, OU ADICIONA O XDATA NO ELEMENTO COM SOMENTE A SEQUENCIA
+;;;++ DESCRIï¿½ï¿½O: ESCREVE, OU ADICIONA O XDATA NO ELEMENTO COM SOMENTE A SEQUENCIA
 ;;;++ ENTRADA: elm1:ELEMENTO <> xdt1:XDATA A SER ESCRITO ide1:sequencia do xdata 
 ;;;++ SAIDA: XDTA E SEQUENCIA ESCRINA NO ELEMENTO
 (defun ESHOP-CLC_XDT_SEQ (elm1 xdt1 ide1 /)
@@ -212,7 +212,7 @@
 
 
 ;;;<> ESHOP-DEL_XDTA_ELM
-;;;++ DESCRIÇÃO: ROTINA APAGAR TODAS AS XDATAS DO ELEMENTO
+;;;++ DESCRIï¿½ï¿½O: ROTINA APAGAR TODAS AS XDATAS DO ELEMENTO
 ;;;++ ENTRADA: elm1:ssname do elemento
 ;;;++ SAIDA: ELEMENTO SEM O XDTA
 (defun ESHOP-DEL_XDTA_ELM (elm1 / xdt1 ety1)
@@ -229,7 +229,7 @@
 )
 
 ;;;<> ESHOP-MUD_DDS_XDT
-;;;++ DESCRIÇÃO: Modifica tabelas (PLURAL) do elemento, entrada lista com tabelas e lista com valores
+;;;++ DESCRIï¿½ï¿½O: Modifica tabelas (PLURAL) do elemento, entrada lista com tabelas e lista com valores
 ;;;++ ENTRADA:elm1:elemento para mudar xdata; xdta1:xdata a ser modificada; prr1:chave a ser mudada ex:dds_grl; lst1:lista a ser modificada; lst2:valores a ser modificados
 ;;;++ SAIDA: Modifica as tabelas do elemento e retorna a sequencia do elemento
 (defun ESHOP-MUD_DDS_XDT
@@ -257,7 +257,7 @@
 )
 
 ;;;<> ESHOP-RTN_XDT_VLR1  
-;;;++ DESCRIÇÃO: RETORNA VALOR DE UM CAMPO NO XDTA, DENTRO DE UM PARAMETRO
+;;;++ DESCRIï¿½ï¿½O: RETORNA VALOR DE UM CAMPO NO XDTA, DENTRO DE UM PARAMETRO
 ;;;++ ENTRADA: XDT:XDTA ELEMENTO; PRR1:PARAMETRO ENTRADA EX"dad_grl"; PRR2:CAMPO SOLICITADO EX"clt_ptoentrega"
 ;;;++ SAIDA: VALOR DO CAMPO SOLICITADO
 (defun ESHOP-RTN_XDT_VLR1 (xdt1 prr1 prr2 elm1 /)
@@ -270,8 +270,8 @@
 
 
 ;;;<> ESHOP-RTN_XDT_SEL   >>>>>>>>> SOMENTE_XDATA
-;;;++ DESCRIÇÃO: DEIXA NA SELEÇÃO SOMENTE O XDATA ESCOLHIDO RETIRANDO TODAS AS OUTRAS ENTIDADES
-;;;++ ENTRADA: sel1:seleção de elementos ; xdat:xdata para retornar
+;;;++ DESCRIï¿½ï¿½O: DEIXA NA SELEï¿½ï¿½O SOMENTE O XDATA ESCOLHIDO RETIRANDO TODAS AS OUTRAS ENTIDADES
+;;;++ ENTRADA: sel1:seleï¿½ï¿½o de elementos ; xdat:xdata para retornar
 ;;;++ SAIDA: lista com somente os elementos xdatas.
 
 (defun ESHOP-RTN_ELM_XDT_SEL (sel1 xdt1 / int1 int2 elm1)
@@ -299,7 +299,7 @@
 
 
 ;;;<> ESHOP-XDTS_ELM
-;;;++ DESCRIÇÃO: RETORNA TODOS OS XDATAS DO ELEMENTO
+;;;++ DESCRIï¿½ï¿½O: RETORNA TODOS OS XDATAS DO ELEMENTO
 ;;;++ ENTRADA: elm:SSNAME DO ELEMENTO
 ;;;++ SAIDA: LISTA COM O XDATAS
 (DEFUN ESHOP-RTN_XDT_ELM (elm1 /)
@@ -308,7 +308,7 @@
 
 
 ;;;<> ESHOP-MD_ETY_ELM
-;;;++ DESCRIÇÃO: MODIFICA ELEMENTO SOLICITANDO CARACTERISTICAS
+;;;++ DESCRIï¿½ï¿½O: MODIFICA ELEMENTO SOLICITANDO CARACTERISTICAS
 ;;;++ ENTRADA: elm1:elemento, dxf1:qual dxf vai mudar, var1:novo valor caracteristica 
 ;;;++ SAIDA: ELEMENTO ALTERADO
 (defun ESHOP-MUD_CRC_ELM (elm1 dxf1 str1 / ety1)
@@ -334,7 +334,7 @@
 
 
 ;;;<> ESHOP-DAD_GRL
-;;;++ DESCRIÇÃO: retorna dados do elemento selecionado
+;;;++ DESCRIï¿½ï¿½O: retorna dados do elemento selecionado
 ;;;++ ENTRADA: 
 ;;;++ SAIDA: LISTA COM OS DADOS SOLICITADOS
 (defun ESHOP-DAD_GRL (xdt1 elm1 lst1 / x lst2)
@@ -362,7 +362,7 @@
 
 
 ;;;<> ESHOP-MNT_LST_DAD
-;;;++ DESCRIÇÃO: CRIA ASSOCIAÇÃOD E PARES DE LISTA EX:(1000 "123"). SE NA LISTA TIVER UM PONTO (X,Y) COLOCA-SE 1010
+;;;++ DESCRIï¿½ï¿½O: CRIA ASSOCIAï¿½ï¿½OD E PARES DE LISTA EX:(1000 "123"). SE NA LISTA TIVER UM PONTO (X,Y) COLOCA-SE 1010
 ;;;++ ENTRADA: lst:LISTA COM STRINGS '("123" "134")
 ;;;++ SAIDA: LISTA COM OS PARES ASSOCIADOS)
 

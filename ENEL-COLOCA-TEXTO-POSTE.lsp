@@ -41,11 +41,9 @@
 	  c2 (list (+ (car pto) lado) (- (cadr pto) lado)))
     (setq c1 (list (- (car pto) (/ lado 2.0)) (- (cadr pto) (/ lado 2.0)))
 	  c2 (list (+ (car pto) (/ lado 2.0)) (+ (cadr pto) (/ lado 2.0)))))
-  
-  (setq ss (ssget "_C" c1 c2))
-  ;(_ENEL_DEBUG_QUAD pto lado esq_sup)
 
-  ;(command "line" c1 c2 "")
+  (ESHOP-ZOM_RAI c1 20)
+  (setq ss (ssget "_C" c1 c2))
   (null ss))
 
 (defun _ENEL_DESENHA_QUAD (pto txt ht / dx pad p1 p2 p3 p4)

@@ -4,14 +4,16 @@
 (defun GERAR_LISTA_TXT (pto2 txt1) nil)
 
 ;;;<> ENEL_DEFLEX
-;;;++ DESCRI??O: Calcula angulo de deflexao entre dois segmentos no vertice (pto2)
+;;;++ DESCRI??O: Calcula angulo de deflexao (abertura) entre dois segmentos no vertice (pto2)
+;;;++ Deflexao = angulo de giro de pto1->pto2 para pto2->pto3 (suplementar do angulo interno)
 ;;;++ Usa ang3 (angle pto2 pto1) e ang4 (angle pto2 pto3) definidos no escopo de chamada
-;;;++ SAIDA: angulo em radianos entre 0 e pi
-(defun ENEL_DEFLEX (/ diff)
+;;;++ SAIDA: angulo em radianos entre 0 e pi/2 (angulo de abertura, nao o interno)
+(defun ENEL_DEFLEX (/ diff interno)
   (setq diff (rem (- ang4 ang3) (* 2 pi)))
   (if (> diff pi) (setq diff (- diff (* 2 pi))))
   (if (< diff (- pi)) (setq diff (+ diff (* 2 pi))))
-  (abs diff)
+  (setq interno (abs diff))
+  (min interno (- pi interno))
 )
 
 
